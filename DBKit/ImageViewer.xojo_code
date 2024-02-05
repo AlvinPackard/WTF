@@ -78,6 +78,10 @@ Implements  DBKit.Control
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
+		CurrentImageFile As FolderItem
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
 		Table As String
 	#tag EndProperty
 

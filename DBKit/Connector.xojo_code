@@ -877,6 +877,8 @@
 		    Var cri As Integer = RowWithPrimaryKey
 		    
 		    'The user has unsaved changes. Ask them if they wish to continue.
+		    //The following will always be true, since this is called after the row selected has changed
+		    //sri will point to newly selected row, and cri will point to previously selected row
 		    If sri <> cri Then
 		      ConfirmUnsavedChanges(AddressOf LoadSelectedRowContinue, AddressOf LoadSelectedRowCancel)
 		    End If
@@ -1005,7 +1007,10 @@
 	#tag EndDelegateDeclaration
 
 	#tag Method, Flags = &h21, CompatibilityFlags = API2Only and ( (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) )
-		Private Sub NoRowSelected(tableName As String = "")
+		Private Sub NoRowSelected()
+		  //#My Change: Removed method paramenter TableName As String="" as TableName is unused in method
+		  'Clear the values of bound controls and disable them
+		  
 		  'Clear the values of bound controls and disable them
 		  
 		  AllowCheckForRowChange = False
@@ -1460,8 +1465,26 @@
 		        DBKit.ImageViewer(c).Image = Nil
 		        DBKit.ImageViewer(c).CurrentImage = Nil
 		      Else
-		        //#my change starts
+		        
 		        Var p As picture = row.Column(Column).PictureValue
+		        
+		        //#My Change starts
+		        Var ImageType As Integer=row.Column(column).Type
+		        Var f As FolderItem
+		        
+		        If ImageType=5 or ImageType=18 then 
+		          var ImagePath As String=row.Column(column).StringValue //Get path as string
+		          f = New FolderItem(ImagePath) //Get folderItem of image
+		          If f<>nil then
+		            p=picture.Open(f)
+		            DBKit.ImageViewer(c).CurrentImageFile=f
+		          End If
+		          
+		        Else //Image is probably stored as a BLOB
+		          p=row.Column(Column).PictureValue 
+		        End If
+		        //#My Change ends
+		        
 		        If p = Nil Then
 		          DBKit.ImageViewer(c).Image = Nil
 		          DBKit.ImageViewer(c).CurrentImage = Nil

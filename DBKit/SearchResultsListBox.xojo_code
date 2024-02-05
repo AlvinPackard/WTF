@@ -33,7 +33,8 @@ Implements  DBKit.Control
 		  For Each row As DatabaseRow In rs
 		    AddRow("")
 		    For i As Integer = 0 To row.ColumnCount - 1
-		      Var cntrlColumnIndex As Integer
+		      //#My Change variable cntrlColumnIndex is unused
+		      //Var cntrlColumnIndex As Integer 
 		      Var rowIndex As Integer = LastAddedRowIndex
 		      For j As Integer = 0 To LastColumnIndex
 		        If ColumnTagAt(j) <> "" Then 
@@ -48,7 +49,9 @@ Implements  DBKit.Control
 		  'If there is at least one row, select and load it
 		  If RowCount > 0 Then
 		    SelectedRowIndex = 0
-		    Connector.LoadSelectedRow
+		    
+		    //#My Change Connector.LoadSelectedRow is called by SearchResultsListBox Event Handler SelectionChanged
+		    //Connector.LoadSelectedRow
 		  End If
 		End Sub
 	#tag EndMethod
