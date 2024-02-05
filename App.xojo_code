@@ -10,6 +10,7 @@ Inherits DesktopApplication
 		    dbFlies=New DBKit.Connector
 		    if dbFlies.connected(f) then
 		      var w As new WndMain
+		      w.Show
 		    else
 		      MessageBox("mistakes have been made")
 		    end if

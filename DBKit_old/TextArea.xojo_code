@@ -1,115 +1,43 @@
 #tag Class
-Protected Class SearchResultsListBox
-Inherits DesktopListBox
-Implements  DBKit.Control
-	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
+Protected Class TextArea
+Inherits DesktopTextArea
+Implements DBKit.Control
+	#tag CompatibilityFlags = ( TargetDesktop and ( Target32Bit or Target64Bit ) )
 	#tag Event
 		Sub Opening()
-		  If Columns <> "" Then
-		    Var theColumns() As String = Columns.Split(",")
-		    BindDatabaseColumns(theColumns)
-		  End If
+		  Enabled = False
 		  
 		  Opening
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub SelectionChanged()
-		  SelectionChanged
+		Sub TextChanged()
+		  TextChanged
 		  
-		  If Connector <> Nil Then
-		    Connector.LoadSelectedRow
-		  end if
+		  Connector.CheckForRowChange
 		End Sub
 	#tag EndEvent
 
 
 	#tag Method, Flags = &h0
-		Sub AddRowsFromRowSet(rs As RowSet)
-		  'Add rows to the listbox matching the columns in the rowset to the column bound
-		  'via BindListBoxColumn
-		  
-		  For Each row As DatabaseRow In rs
-		    AddRow("")
-		    For i As Integer = 0 To row.ColumnCount - 1
-		      Var cntrlColumnIndex As Integer
-		      Var rowIndex As Integer = LastAddedRowIndex
-		      For j As Integer = 0 To LastColumnIndex
-		        If ColumnTagAt(j) <> "" Then 
-		          CellTextAt(rowIndex, j) = ColumnValue(ColumnTagAt(j), row)
-		        End If
-		      Next
-		    Next
-		    'Set the row tag to the primary key so we can find this row to display it in the bound entry controls
-		    RowTagAt(LastAddedRowIndex) = rs.Column(Connector.PrimaryKeyColumn).Value
-		  Next
-		  
-		  'If there is at least one row, select and load it
-		  If RowCount > 0 Then
-		    SelectedRowIndex = 0
-		    Connector.LoadSelectedRow
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub Bind(tc As DBKit.Connector)
 		  // Part of the DBKit.KitControl interface.
 		  
+		  If Column = "" Then
+		    Column = Name
+		  End If
 		  Connector = tc
-		  tc.BindListBoxControl(Self)
+		  
+		  If Table = "" Then
+		    Table = tc.Table
+		  End If
+		  
+		  'Only bind controls are for the same table as this connector
+		  If Table = tc.Table Then
+		    tc.BindEntryControl(Self, Column)
+		  End If
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub BindDatabaseColumns(theColumns() As String)
-		  Var listboxColumnIndex As Integer
-		  if ColumnCount < theColumns.Count then ColumnCount = theColumns.Count
-		  For Each colName As String In theColumns
-		    If colName <> "" Then
-		      ColumnTagAt(listboxColumnIndex) = colName.Lowercase.Trim
-		    End If
-		    listboxColumnIndex = listboxColumnIndex + 1
-		  Next
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub BindDatabaseColumns(paramarray columns As String)
-		  'So it can be passed a paramarray
-		  BindDatabaseColumns(columns)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ColumnValue(columnNames As String, row As DatabaseRow) As String
-		  Var theValue As String
-		  Var columns() As String = columnNames.Split(",")
-		  If Concatenater = "" Then Concatenater = " "
-		  For Each column As String In columns
-		    theValue = theValue + row.Column(column).StringValue + Concatenater
-		  Next
-		  
-		  theValue = theValue.Trim(Concatenater)
-		  
-		  Return theValue
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ColumnValue(columnNames As String, row As RowSet) As String
-		  Var theValue As String
-		  Var columns() As String = columnNames.Split(",")
-		  If Concatenater = "" Then Concatenater = " "
-		  For Each column As String In columns
-		    theValue = theValue + row.Column(column).StringValue + Concatenater
-		  Next
-		  
-		  theValue = theValue.Trim(Concatenater)
-		  
-		  Return theValue
-		End Function
 	#tag EndMethod
 
 
@@ -118,20 +46,20 @@ Implements  DBKit.Control
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event SelectionChanged()
+		Event TextChanged()
 	#tag EndHook
 
 
 	#tag Property, Flags = &h0
-		Columns As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h0
-		Concatenater As String
+		Column As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
 		Connector As DBKit.Connector
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		Table As String
 	#tag EndProperty
 
 
@@ -249,35 +177,19 @@ Implements  DBKit.Control
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
+			Name="BackgroundColor"
+			Visible=true
+			Group="Appearance"
+			InitialValue="&hFFFFFF"
+			Type="ColorGroup"
+			EditorType="ColorGroup"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="HasBorder"
 			Visible=true
 			Group="Appearance"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="ColumnCount"
-			Visible=true
-			Group="Appearance"
-			InitialValue="1"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="ColumnWidths"
-			Visible=true
-			Group="Appearance"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DefaultRowHeight"
-			Visible=true
-			Group="Appearance"
-			InitialValue="-1"
-			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -289,33 +201,11 @@ Implements  DBKit.Control
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="GridLineStyle"
+			Name="Format"
 			Visible=true
 			Group="Appearance"
-			InitialValue="0"
-			Type="GridLineStyles"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - None"
-				"1 - Horizontal"
-				"2 - Vertical"
-				"3 - Both"
-			#tag EndEnumValues
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="HasHeader"
-			Visible=true
-			Group="Appearance"
-			InitialValue="True"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="HeadingIndex"
-			Visible=true
-			Group="Appearance"
-			InitialValue="-1"
-			Type="Integer"
+			InitialValue=""
+			Type="String"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -327,12 +217,36 @@ Implements  DBKit.Control
 			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="InitialValue"
+			Name="HideSelection"
 			Visible=true
 			Group="Appearance"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="LineHeight"
+			Visible=true
+			Group="Appearance"
+			InitialValue="0"
+			Type="Double"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="LineSpacing"
+			Visible=true
+			Group="Appearance"
+			InitialValue="1"
+			Type="Double"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Multiline"
+			Visible=true
+			Group="Appearance"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="HasHorizontalScrollbar"
@@ -351,12 +265,20 @@ Implements  DBKit.Control
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="DropIndicatorVisible"
+			Name="AllowStyledText"
 			Visible=true
 			Group="Appearance"
-			InitialValue="False"
+			InitialValue="True"
 			Type="Boolean"
 			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="TextColor"
+			Visible=true
+			Group="Appearance"
+			InitialValue="&h000000"
+			Type="ColorGroup"
+			EditorType="ColorGroup"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Transparent"
@@ -383,7 +305,29 @@ Implements  DBKit.Control
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="AllowAutoHideScrollbars"
+			Name="AllowTabs"
+			Visible=true
+			Group="Behavior"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="TextAlignment"
+			Visible=true
+			Group="Behavior"
+			InitialValue="0"
+			Type="TextAlignments"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - Default"
+				"1 - Left"
+				"2 - Center"
+				"3 - Right"
+			#tag EndEnumValues
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowSpellChecking"
 			Visible=true
 			Group="Behavior"
 			InitialValue="True"
@@ -391,64 +335,28 @@ Implements  DBKit.Control
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="AllowResizableColumns"
-			Visible=true
-			Group="Behavior"
-			InitialValue="False"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AllowRowDragging"
-			Visible=true
-			Group="Behavior"
-			InitialValue="False"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AllowRowReordering"
-			Visible=true
-			Group="Behavior"
-			InitialValue="False"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AllowExpandableRows"
-			Visible=true
-			Group="Behavior"
-			InitialValue="False"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="RequiresSelection"
-			Visible=true
-			Group="Behavior"
-			InitialValue="False"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="RowSelectionType"
+			Name="MaximumCharactersAllowed"
 			Visible=true
 			Group="Behavior"
 			InitialValue="0"
-			Type="RowSelectionTypes"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - Single"
-				"1 - Multiple"
-			#tag EndEnumValues
+			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Concatenater"
-			Visible=false
+			Name="ValidationMask"
+			Visible=true
 			Group="Behavior"
 			InitialValue=""
 			Type="String"
-			EditorType="MultiLineEditor"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ReadOnly"
+			Visible=true
+			Group="Behavior"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Bold"
@@ -506,7 +414,36 @@ Implements  DBKit.Control
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Columns"
+			Name="Text"
+			Visible=true
+			Group="Initial State"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="UnicodeMode"
+			Visible=true
+			Group="Selection Behavior"
+			InitialValue="0"
+			Type="DesktopTextArea.UnicodeModes"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - Native"
+				"1 - Characters"
+				"2 - Codepoints"
+			#tag EndEnumValues
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Table"
+			Visible=true
+			Group="DBKit"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Column"
 			Visible=true
 			Group="DBKit"
 			InitialValue=""
@@ -518,22 +455,6 @@ Implements  DBKit.Control
 			Visible=false
 			Group="Position"
 			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="_ScrollOffset"
-			Visible=false
-			Group="Appearance"
-			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="_ScrollWidth"
-			Visible=false
-			Group="Appearance"
-			InitialValue="-1"
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty

@@ -1,8 +1,8 @@
 #tag Class
 Protected Class SearchResultsListBox
 Inherits DesktopListBox
-Implements  DBKit.Control
-	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
+Implements DBKit.Control
+	#tag CompatibilityFlags = ( TargetDesktop and ( Target32Bit or Target64Bit ) )
 	#tag Event
 		Sub Opening()
 		  If Columns <> "" Then
@@ -33,7 +33,7 @@ Implements  DBKit.Control
 		  For Each row As DatabaseRow In rs
 		    AddRow("")
 		    For i As Integer = 0 To row.ColumnCount - 1
-		      Var cntrlColumnIndex As Integer
+		      //Var cntrlColumnIndex As Integer #My Change cntrlColumnIndex is unused
 		      Var rowIndex As Integer = LastAddedRowIndex
 		      For j As Integer = 0 To LastColumnIndex
 		        If ColumnTagAt(j) <> "" Then 
@@ -42,13 +42,17 @@ Implements  DBKit.Control
 		      Next
 		    Next
 		    'Set the row tag to the primary key so we can find this row to display it in the bound entry controls
+		    var colWanted As String
+		    colWanted=Connector.PrimaryKeyColumn
+		    //var newValue As variant=rs.Column(Connector.PrimaryKeyColumn).Value #My Change newValue is unused
 		    RowTagAt(LastAddedRowIndex) = rs.Column(Connector.PrimaryKeyColumn).Value
 		  Next
 		  
 		  'If there is at least one row, select and load it
 		  If RowCount > 0 Then
 		    SelectedRowIndex = 0
-		    Connector.LoadSelectedRow
+		    //Connector.LoadSelectedRow 
+		    //#My Change as LoadSelectedRow is called by the ListBox Event SelectionChanged
 		  End If
 		End Sub
 	#tag EndMethod

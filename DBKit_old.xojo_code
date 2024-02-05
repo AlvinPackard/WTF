@@ -1,5 +1,6 @@
 #tag Module
-Protected Module DBKit
+Protected Module DBKit_old
+	#tag CompatibilityFlags = API2Only and ( ( TargetDesktop and ( Target64Bit ) ) )
 	#tag Method, Flags = &h0, CompatibilityFlags = API2Only and ( (TargetDesktop and (Target32Bit or Target64Bit)) )
 		Function IndexOf(Extends cntrl As DesktopRadioGroup, theCaption As String) As Integer
 		  'Takes a caption and returns it's index

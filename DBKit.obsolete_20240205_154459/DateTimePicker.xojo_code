@@ -1,34 +1,19 @@
 #tag Class
-Protected Class ImageViewer
-Inherits DesktopImageViewer
+Protected Class DateTimePicker
+Inherits DesktopDateTimePicker
 Implements  DBKit.Control
 	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
 	#tag Event
-		Sub DropObject(obj As DragItem, action As DragItem.Types)
-		  Var p As Picture
-		  If Obj.PictureAvailable Then
-		    p = obj.Picture
-		  ElseIf Obj.FolderItemAvailable Then
-		    p = Picture.Open(obj.FolderItem)
-		  End If
-		  
-		  CurrentImage = p
-		  
-		  DropObject(obj, action)
+		Sub DateChanged(value as DateTime)
+		  DateChanged(value)
 		  
 		  Connector.CheckForRowChange
-		  
-		  
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub Opening()
 		  Enabled = False
-		  
-		  'Allow this control to accept a JPEG dropped on it
-		  AcceptPictureDrop
-		  AcceptFileDrop("image/jpeg")
 		  
 		  Opening
 		End Sub
@@ -57,7 +42,7 @@ Implements  DBKit.Control
 
 
 	#tag Hook, Flags = &h0
-		Event DropObject(obj as DragItem, action as DragItem.Types)
+		Event DateChanged(value As DateTime)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -74,23 +59,11 @@ Implements  DBKit.Control
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
-		CurrentImage As Picture
-	#tag EndProperty
-
-	#tag Property, Flags = &h0
 		Table As String
 	#tag EndProperty
 
 
 	#tag ViewBehavior
-		#tag ViewProperty
-			Name="Image"
-			Visible=true
-			Group="Appearance"
-			InitialValue=""
-			Type="Picture"
-			EditorType="Picture"
-		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
@@ -135,7 +108,7 @@ Implements  DBKit.Control
 			Name="Width"
 			Visible=true
 			Group="Position"
-			InitialValue="32"
+			InitialValue="92"
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty
@@ -143,7 +116,7 @@ Implements  DBKit.Control
 			Name="Height"
 			Visible=true
 			Group="Position"
-			InitialValue="32"
+			InitialValue="22"
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty
@@ -236,12 +209,62 @@ Implements  DBKit.Control
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="CurrentImage"
+			Name="AllowFocusRing"
 			Visible=true
 			Group="Appearance"
 			InitialValue=""
-			Type="Picture"
-			EditorType="Picture"
+			Type="Boolean"
+			EditorType="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="GraphicalDisplay"
+			Visible=true
+			Group="Appearance"
+			InitialValue=""
+			Type="Boolean"
+			EditorType="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="DisplayMode"
+			Visible=true
+			Group="Appearance"
+			InitialValue=""
+			Type="DisplayModes"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - DateAndTime"
+				"1 - DateOnly"
+				"2 - TimeOnly"
+			#tag EndEnumValues
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="HourMode"
+			Visible=true
+			Group="Appearance"
+			InitialValue=""
+			Type="HourModes"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - System"
+				"1 - Hours12"
+				"2 - Hours24"
+			#tag EndEnumValues
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="DisplaySeconds"
+			Visible=true
+			Group="Appearance"
+			InitialValue=""
+			Type="Boolean"
+			EditorType="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="TodayButtonCaption"
+			Visible=true
+			Group="Initial State"
+			InitialValue=""
+			Type="String"
+			EditorType="String"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Table"

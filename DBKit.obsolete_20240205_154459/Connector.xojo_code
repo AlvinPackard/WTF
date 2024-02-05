@@ -265,7 +265,7 @@
 		        End If
 		        
 		      Else
-		        If value.Type = 8 Then 'if it's a string
+		        If value.Type = 8 or value.Type=5 Then 'if it's a string
 		          'see if the it's a perfect match - case included
 		          If value.StringValue.Compare(CurrentRow.Column(Column).StringValue, ComparisonOptions.CaseSensitive) <> 0 Then
 		            Return True
@@ -509,7 +509,7 @@
 		  'optionally confirm with the user that they want to continue and lose the changes they
 		  'made or not.
 		  
-		  If NewRow <> Nil Then Return True
+		  If NewRow <> Nil Then Return TRUE
 		  
 		  For Each cntrl As Dictionary In BoundControls
 		    
@@ -550,7 +550,9 @@
 		        End If
 		        
 		      Case IsA DBKit.ImageViewer
+		        
 		        If ColumnValueChanged(Column, DBKit.ImageViewer(c).CurrentImage) Then
+		          DBKit.ImageViewer(c).Enabled=True
 		          Return True
 		        End If
 		        
@@ -865,7 +867,7 @@
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit))
 		Sub LoadSelectedRow()
-		  If AllowCheckForRowChange And CurrentRowChanged Then
+		  If AllowCheckForRowChange And  CurrentRowChanged  Then //
 		    
 		    'See if the user clicked on a row different from the one that is for the
 		    'row being displayed for editing
@@ -1005,7 +1007,8 @@
 	#tag EndDelegateDeclaration
 
 	#tag Method, Flags = &h21, CompatibilityFlags = API2Only and ( (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) )
-		Private Sub NoRowSelected(tableName As String = "")
+		Private Sub NoRowSelected()
+		  //#My Change: Removed method paramenter TableName As String="" as TableName is unused in method
 		  'Clear the values of bound controls and disable them
 		  
 		  AllowCheckForRowChange = False
@@ -1276,7 +1279,7 @@
 		    #EndIf
 		    
 		  Next
-		   
+		  
 		  'Raise the SavingRow event to give the user a chance to execute code and/or modify the row
 		  'then decide if they still want to save or not.
 		  Var savingRow As Boolean = True
@@ -1460,8 +1463,26 @@
 		        DBKit.ImageViewer(c).Image = Nil
 		        DBKit.ImageViewer(c).CurrentImage = Nil
 		      Else
+		        var ImageType As Integer = row.Column(column).Type
+		        Var p As picture
+		        dim f As FolderItem
+		        
 		        //#my change starts
-		        Var p As picture = row.Column(Column).PictureValue
+		        //If image is stored in db as path to image as string
+		        
+		        If ImageType=5 or ImageType=18 then 
+		          var ImagePath As String=row.Column(column).StringValue //Get path as string
+		          f = New FolderItem(ImagePath) //Get folderItem of image
+		          If f<>nil then
+		            p=picture.Open(f)
+		            DBKit.ImageViewer(c).CurrentImageFile=f
+		          End If
+		          
+		        Else //Image is probably stored as a BLOB
+		          p=row.Column(Column).PictureValue 
+		        End If
+		        //#my change ends
+		        
 		        If p = Nil Then
 		          DBKit.ImageViewer(c).Image = Nil
 		          DBKit.ImageViewer(c).CurrentImage = Nil
@@ -1809,6 +1830,29 @@
 	#tag Hook, Flags = &h0
 		Event SavingRow(row As Variant) As Boolean
 	#tag EndHook
+
+
+	#tag Note, Name = Temp Code
+		var ImagePath As String=row.Column(column).StringValue
+		var f As New FolderItem(ImagePath)
+		var p As picture
+		If f<>nil then
+		  p=picture.Open(f)
+		End If
+		
+		If p = Nil Then
+		  DBKit.ImageViewer(c).Image = Nil
+		  DBKit.ImageViewer(c).CurrentImage = Nil
+		Else
+		  'Store the picture in the CurrentImage property as the Image property will be scaled
+		  DBKit.ImageViewer(c).CurrentImage = p
+		  'Use the ImageMargin constant so the image doesn't hit the border of the imageviewer
+		  DesktopImageViewer(c).Image = ScaleImageTo(p, DBKit.ImageViewer(c).Width * ImageMargin, DBKit.ImageViewer(c).Height * ImageMargin)
+		End If
+		
+		
+		
+	#tag EndNote
 
 
 	#tag Property, Flags = &h21

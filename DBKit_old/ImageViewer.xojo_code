@@ -1,8 +1,8 @@
 #tag Class
 Protected Class ImageViewer
 Inherits DesktopImageViewer
-Implements  DBKit.Control
-	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
+Implements DBKit.Control
+	#tag CompatibilityFlags = ( TargetDesktop and ( Target32Bit or Target64Bit ) )
 	#tag Event
 		Sub DropObject(obj As DragItem, action As DragItem.Types)
 		  Var p As Picture
@@ -10,6 +10,7 @@ Implements  DBKit.Control
 		    p = obj.Picture
 		  ElseIf Obj.FolderItemAvailable Then
 		    p = Picture.Open(obj.FolderItem)
+		    CurrentImageFile=obj.FolderItem
 		  End If
 		  
 		  CurrentImage = p
@@ -55,6 +56,23 @@ Implements  DBKit.Control
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub ImageAsFolderItem(ID_PK As Integer)
+		  
+		  If connector<>nil and connector.Connection IsA Database Then
+		    
+		    Var rs As RowSet
+		    Var sql As string="SELECT FlyPhoto FROM t_Fly WHERE ID_FLY=?"
+		    
+		    rs=Connector.Connection.SelectSQL(sql, ID_PK)
+		    
+		    var f As New FolderItem(rs.Column("FlyPhoto"))
+		    me.CurrentImage=Picture.open(f)
+		    
+		  End If
+		End Sub
+	#tag EndMethod
+
 
 	#tag Hook, Flags = &h0
 		Event DropObject(obj as DragItem, action as DragItem.Types)
@@ -75,6 +93,10 @@ Implements  DBKit.Control
 
 	#tag Property, Flags = &h0
 		CurrentImage As Picture
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		CurrentImageFile As FolderItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h0

@@ -1,36 +1,13 @@
 #tag Class
-Protected Class ImageViewer
-Inherits DesktopImageViewer
-Implements  DBKit.Control
-	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
+Protected Class TextField
+Inherits DesktopTextField
+Implements DBKit.Control
+	#tag CompatibilityFlags = ( TargetDesktop and ( Target32Bit or Target64Bit ) )
 	#tag Event
-		Sub DropObject(obj As DragItem, action As DragItem.Types)
-		  Var p As Picture
-		  If Obj.PictureAvailable Then
-		    p = obj.Picture
-		  ElseIf Obj.FolderItemAvailable Then
-		    p = Picture.Open(obj.FolderItem)
-		  End If
-		  
-		  CurrentImage = p
-		  
-		  DropObject(obj, action)
+		Sub TextChanged()
+		  TextChanged
 		  
 		  Connector.CheckForRowChange
-		  
-		  
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub Opening()
-		  Enabled = False
-		  
-		  'Allow this control to accept a JPEG dropped on it
-		  AcceptPictureDrop
-		  AcceptFileDrop("image/jpeg")
-		  
-		  Opening
 		End Sub
 	#tag EndEvent
 
@@ -57,11 +34,7 @@ Implements  DBKit.Control
 
 
 	#tag Hook, Flags = &h0
-		Event DropObject(obj as DragItem, action as DragItem.Types)
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
-		Event Opening()
+		Event TextChanged()
 	#tag EndHook
 
 
@@ -74,23 +47,11 @@ Implements  DBKit.Control
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
-		CurrentImage As Picture
-	#tag EndProperty
-
-	#tag Property, Flags = &h0
 		Table As String
 	#tag EndProperty
 
 
 	#tag ViewBehavior
-		#tag ViewProperty
-			Name="Image"
-			Visible=true
-			Group="Appearance"
-			InitialValue=""
-			Type="Picture"
-			EditorType="Picture"
-		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
@@ -119,7 +80,7 @@ Implements  DBKit.Control
 			Name="Left"
 			Visible=true
 			Group="Position"
-			InitialValue=""
+			InitialValue="0"
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty
@@ -127,7 +88,7 @@ Implements  DBKit.Control
 			Name="Top"
 			Visible=true
 			Group="Position"
-			InitialValue=""
+			InitialValue="0"
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty
@@ -135,7 +96,7 @@ Implements  DBKit.Control
 			Name="Width"
 			Visible=true
 			Group="Position"
-			InitialValue="32"
+			InitialValue="80"
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty
@@ -143,7 +104,7 @@ Implements  DBKit.Control
 			Name="Height"
 			Visible=true
 			Group="Position"
-			InitialValue="32"
+			InitialValue="22"
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty
@@ -151,7 +112,7 @@ Implements  DBKit.Control
 			Name="LockLeft"
 			Visible=true
 			Group="Position"
-			InitialValue=""
+			InitialValue="True"
 			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
@@ -159,7 +120,7 @@ Implements  DBKit.Control
 			Name="LockTop"
 			Visible=true
 			Group="Position"
-			InitialValue=""
+			InitialValue="True"
 			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
@@ -167,7 +128,7 @@ Implements  DBKit.Control
 			Name="LockRight"
 			Visible=true
 			Group="Position"
-			InitialValue=""
+			InitialValue="False"
 			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
@@ -175,7 +136,7 @@ Implements  DBKit.Control
 			Name="LockBottom"
 			Visible=true
 			Group="Position"
-			InitialValue=""
+			InitialValue="False"
 			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
@@ -188,9 +149,9 @@ Implements  DBKit.Control
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="AllowTabStop"
+			Name="TabStop"
 			Visible=true
-			Group="Focus Control"
+			Group="Position"
 			InitialValue="True"
 			Type="Boolean"
 			EditorType=""
@@ -204,10 +165,74 @@ Implements  DBKit.Control
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
+			Name="BackgroundColor"
+			Visible=true
+			Group="Appearance"
+			InitialValue="&hFFFFFF"
+			Type="ColorGroup"
+			EditorType="ColorGroup"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="HasBorder"
+			Visible=true
+			Group="Appearance"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Enabled"
+			Visible=true
+			Group="Appearance"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Format"
+			Visible=true
+			Group="Appearance"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Tooltip"
+			Visible=true
+			Group="Appearance"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Password"
+			Visible=true
+			Group="Appearance"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="TextColor"
+			Visible=true
+			Group="Appearance"
+			InitialValue="&h000000"
+			Type="ColorGroup"
+			EditorType="ColorGroup"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Transparent"
 			Visible=true
 			Group="Appearance"
 			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowFocusRing"
+			Visible=true
+			Group="Appearance"
+			InitialValue="True"
 			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
@@ -220,28 +245,113 @@ Implements  DBKit.Control
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Tooltip"
+			Name="AllowTabs"
 			Visible=true
-			Group="Appearance"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Enabled"
-			Visible=true
-			Group="Appearance"
-			InitialValue="True"
+			Group="Behavior"
+			InitialValue="False"
 			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="CurrentImage"
+			Name="TextAlignment"
 			Visible=true
-			Group="Appearance"
+			Group="Behavior"
+			InitialValue="0"
+			Type="TextAlignments"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - Default"
+				"1 - Left"
+				"2 - Center"
+				"3 - Right"
+			#tag EndEnumValues
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowSpellChecking"
+			Visible=true
+			Group="Behavior"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="MaximumCharactersAllowed"
+			Visible=true
+			Group="Behavior"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ValidationMask"
+			Visible=true
+			Group="Behavior"
 			InitialValue=""
-			Type="Picture"
-			EditorType="Picture"
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ReadOnly"
+			Visible=true
+			Group="Behavior"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="FontName"
+			Visible=true
+			Group="Font"
+			InitialValue="System"
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="FontSize"
+			Visible=true
+			Group="Font"
+			InitialValue="0"
+			Type="Single"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="FontUnit"
+			Visible=true
+			Group="Font"
+			InitialValue="0"
+			Type="FontUnits"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - Default"
+				"1 - Pixel"
+				"2 - Point"
+				"3 - Inch"
+				"4 - Millimeter"
+			#tag EndEnumValues
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Bold"
+			Visible=true
+			Group="Font"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Italic"
+			Visible=true
+			Group="Font"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Underline"
+			Visible=true
+			Group="Font"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Table"
@@ -260,52 +370,20 @@ Implements  DBKit.Control
 			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="PanelIndex"
-			Visible=false
-			Group="Behavior"
-			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="_mIndex"
-			Visible=false
-			Group="Behavior"
-			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="_mInitialParent"
-			Visible=false
-			Group="Behavior"
+			Name="Hint"
+			Visible=true
+			Group="Initial State"
 			InitialValue=""
 			Type="String"
 			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="_mName"
-			Visible=false
-			Group="Behavior"
+			Name="Text"
+			Visible=true
+			Group="Initial State"
 			InitialValue=""
 			Type="String"
 			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="_mPanelIndex"
-			Visible=false
-			Group="Behavior"
-			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Active"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="TabPanelIndex"
@@ -314,14 +392,6 @@ Implements  DBKit.Control
 			InitialValue="0"
 			Type="Integer"
 			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="InitialParent"
-			Visible=false
-			Group="Position"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class
