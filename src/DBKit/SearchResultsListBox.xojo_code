@@ -1,8 +1,8 @@
 #tag Class
 Protected Class SearchResultsListBox
 Inherits DesktopListBox
-Implements  DBKit.Control
-	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
+Implements DBKit.Control
+	#tag CompatibilityFlags = ( TargetDesktop and ( Target32Bit or Target64Bit ) )
 	#tag Event
 		Sub Opening()
 		  If Columns <> "" Then

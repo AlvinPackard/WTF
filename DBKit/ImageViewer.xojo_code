@@ -18,6 +18,8 @@ Implements DBKit.Control
 		  
 		  Connector.CheckForRowChange
 		  
+		  //Not sure how to fix this
+		  
 		  
 		End Sub
 	#tag EndEvent

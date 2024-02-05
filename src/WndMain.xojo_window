@@ -111,6 +111,7 @@ Begin DesktopWindow WndMain
       CreateNewRow    =   False
       DoneIconImage   =   0
       EditIconImage   =   0
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   0

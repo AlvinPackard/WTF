@@ -1,8 +1,8 @@
 #tag Class
 Protected Class ImageViewer
 Inherits DesktopImageViewer
-Implements  DBKit.Control
-	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
+Implements DBKit.Control
+	#tag CompatibilityFlags = ( TargetDesktop and ( Target32Bit or Target64Bit ) )
 	#tag Event
 		Sub DropObject(obj As DragItem, action As DragItem.Types)
 		  Var p As Picture
@@ -17,6 +17,8 @@ Implements  DBKit.Control
 		  DropObject(obj, action)
 		  
 		  Connector.CheckForRowChange
+		  
+		  //Not sure how to fix this
 		  
 		  
 		End Sub
@@ -40,7 +42,7 @@ Implements  DBKit.Control
 		  // Part of the DBKit.KitControl interface.
 		  
 		  If Column = "" Then
-		    Column = Name
+		    Column = me.Name
 		  End If
 		  Connector = tc
 		  
@@ -74,11 +76,11 @@ Implements  DBKit.Control
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
-		CurrentImage As Picture
+		CurrentImage As Picture = nil
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
-		CurrentImageFile As FolderItem
+		CurrentImageFile As FolderItem = nil
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
