@@ -46,7 +46,7 @@ Protected Module DBKit
 	#tag EndMethod
 
 
-	#tag Constant, Name = Version, Type = String, Dynamic = False, Default = \"1.0b6", Scope = Public
+	#tag Constant, Name = Version, Type = String, Dynamic = False, Default = \"1.0b6.1tpw", Scope = Public
 	#tag EndConstant
 
 

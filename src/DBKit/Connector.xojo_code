@@ -265,7 +265,7 @@
 		        End If
 		        
 		      Else
-		        If value.Type = 8 Then 'if it's a string
+		        If value.Type = 8 or value.Type = 5 Then 'if it's a string
 		          'see if the it's a perfect match - case included
 		          If value.StringValue.Compare(CurrentRow.Column(Column).StringValue, ComparisonOptions.CaseSensitive) <> 0 Then
 		            Return True
@@ -550,9 +550,18 @@
 		        End If
 		        
 		      Case IsA DBKit.ImageViewer
-		        If ColumnValueChanged(Column, DBKit.ImageViewer(c).CurrentImage) Then
+		        
+		        //#My Change start
+		        //Check if CurrentImageFile exists, which it will if image loaded via a path
+		        If DbKit.ImageViewer(c).CurrentImageFile<>nil then
+		          If ColumnValueChanged(Column, DBKit.ImageViewer(c).CurrentImageFile.NativePath) Then
+		            Return True
+		          End If
+		          //#My Change ends
+		        ElseIf ColumnValueChanged(Column, DBKit.ImageViewer(c).CurrentImage) Then
 		          Return True
 		        End If
+		        
 		        
 		      Case IsA DBKit.Label
 		        If ColumnValueChanged(Column, DBKit.Label(c).Text) Then
@@ -1281,7 +1290,7 @@
 		    #EndIf
 		    
 		  Next
-		   
+		  
 		  'Raise the SavingRow event to give the user a chance to execute code and/or modify the row
 		  'then decide if they still want to save or not.
 		  Var savingRow As Boolean = True
