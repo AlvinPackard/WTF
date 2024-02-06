@@ -864,6 +864,8 @@
 		    SetControlValue(c, Column, CurrentRow)
 		  Next
 		  
+		  //What if there is no SetEditButton?
+		  
 		  SetEditButtonCaption(EditButtonEditCaption)
 		  
 		  RaiseEvent ControlsStateChanged(False)
@@ -1502,6 +1504,7 @@
 		          DBKit.ImageViewer(c).CurrentImage = p
 		          'Use the ImageMargin constant so the image doesn't hit the border of the imageviewer
 		          DesktopImageViewer(c).Image = ScaleImageTo(p, DBKit.ImageViewer(c).Width * ImageMargin, DBKit.ImageViewer(c).Height * ImageMargin)
+		          DesktopImageViewer(c).Enabled=True //#My Change
 		        End If
 		      End If
 		      

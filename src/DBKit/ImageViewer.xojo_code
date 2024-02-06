@@ -245,7 +245,7 @@ Implements DBKit.Control
 			Name="CurrentImage"
 			Visible=true
 			Group="Appearance"
-			InitialValue=""
+			InitialValue="nil"
 			Type="Picture"
 			EditorType="Picture"
 		#tag EndViewProperty
